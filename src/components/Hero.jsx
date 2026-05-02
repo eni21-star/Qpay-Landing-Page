@@ -19,9 +19,9 @@ import Magnetic from "./Magnetic";
 
 const QLogo = ({ className = "" }) => (
   <div className={`flex items-center ${className}`}>
-    <img 
-      src="/ChatGPT_Image_May_1__2026__10_18_15_AM-removebg-preview.png" 
-      alt="QPay Logo" 
+    <img
+      src="/ChatGPT_Image_May_1__2026__10_18_15_AM-removebg-preview.png"
+      alt="QPay Logo"
       className="h-10 md:h-12 w-auto object-contain"
     />
   </div>
@@ -228,7 +228,7 @@ const Hero = () => {
     <div
       className="bg-customOrange relative overflow-hidden border-none outline-none -mb-[1px] min-h-[100svh] md:min-h-screen flex flex-col md:block"
     >
-      <div 
+      <div
         className="absolute inset-0 z-0 opacity-40 md:opacity-60 pointer-events-none"
         style={{
           backgroundImage: `url("/lean/ChatGPT Image Apr 24, 2026, 07_38_50 PM.png")`,
@@ -357,62 +357,62 @@ const Hero = () => {
       <div className="flex-grow flex flex-col md:grid md:grid-cols-[48%_52%] md:items-stretch md:min-h-screen relative z-10 w-full">
         {/* Top Content Block */}
         <div className="relative z-10 px-5 pt-12 pb-6 flex flex-col gap-3 md:flex md:flex-col md:justify-center md:z-10 md:relative md:pl-[12vw] md:pr-10 md:py-20">
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="font-heading text-white text-[2.75rem] max-md:leading-[1.05] w-full max-md:text-left md:text-left md:text-[5.5rem] md:font-extrabold md:leading-[1.0] md:text-white"
-              style={{ textShadow: "0 2px 20px rgba(249,84,29,0.5)" }}
-            >
-              <motion.span variants={textVariants} className="md:hidden">Pay Anywhere </motion.span>
-              <motion.span variants={textVariants} className="hidden md:inline-block">Pay</motion.span>
-              <br className="hidden md:block" />
-              <motion.span variants={textVariants} className="hidden md:inline-block">Anywhere</motion.span>
-              <br className="max-md:hidden" />
-              <motion.span variants={textVariants} className="inline-block whitespace-nowrap">
-                <span className="bg-[url('/src/assets/line.png')] bg-no-repeat bg-bottom md:pb-[0.1em]">
-                  Even Offline.
-                </span>
-              </motion.span>
-            </motion.div>
-
-            <p
-              ref={textRef}
-              className="font-body font-light max-md:text-[0.95rem] max-md:text-white/75 max-md:leading-relaxed max-md:text-left opacity-0 transform translate-y-12 leading-relaxed md:text-left md:text-white/80 md:text-lg md:mt-6 md:mb-6 md:max-w-md"
-            >
-              <span className="md:hidden block">
-                Zero internet. Secure QR. Instant confirm.
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="font-heading text-white text-[2.75rem] max-md:leading-[1.05] w-full max-md:text-left md:text-left md:text-[5.5rem] md:font-extrabold md:leading-[1.0] md:text-white"
+            style={{ textShadow: "0 2px 20px rgba(249,84,29,0.5)" }}
+          >
+            <motion.span variants={textVariants} className="md:hidden">Pay Anywhere </motion.span>
+            <motion.span variants={textVariants} className="hidden md:inline-block">Pay</motion.span>
+            <br className="hidden md:block" />
+            <motion.span variants={textVariants} className="hidden md:inline-block">Anywhere</motion.span>
+            <br className="max-md:hidden" />
+            <motion.span variants={textVariants} className="inline-block whitespace-nowrap">
+              <span className="bg-[url('/src/assets/line.png')] bg-no-repeat bg-bottom md:pb-[0.1em]">
+                Even Offline.
               </span>
-              <span className="hidden md:block">
-                Generate secure QR codes on your phone with zero internet. Merchants scan, backend verifies instantly. Simple, safe payments built for markets, transport, and real-world low-connectivity areas.
-              </span>
-            </p>
+            </motion.span>
+          </motion.div>
 
-            <div
-              className="flex flex-col opacity-0 transform translate-y-12 w-full text-left"
-              ref={buttonRef}
-            >
-              <div className="flex items-center gap-3 max-md:mb-4 md:flex md:items-center md:gap-3 md:mb-6">
-                <img
-                  src="https://res.cloudinary.com/dtaqusjav/image/upload/v1724414014/people_aenuc1.svg"
-                  alt="People icons"
-                  className="w-9 h-9 md:w-auto md:h-9"
-                />
-                <span className="text-white text-sm md:text-base font-medium">4,200+ users</span>
-              </div>
-              <div className="w-full max-md:[&>div]:!block max-md:[&>div]:!w-full md:w-auto">
-                <Magnetic>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleScrollToWaitlist}
-                    className="w-full bg-white text-customOrange max-md:py-4 font-bold rounded-full hover:bg-gray-100 text-base shadow-lg hover:shadow-xl transition-all duration-300 md:w-auto md:px-10 md:py-4"
-                  >
-                    Start Paying Offline Today
-                  </motion.button>
-                </Magnetic>
-              </div>
+          <p
+            ref={textRef}
+            className="font-body font-light max-md:text-[0.95rem] max-md:text-white/75 max-md:leading-relaxed max-md:text-left opacity-0 transform translate-y-12 leading-relaxed md:text-left md:text-white/80 md:text-lg md:mt-6 md:mb-6 md:max-w-md"
+          >
+            <span className="md:hidden block">
+              Zero internet. Secure QR. Instant confirm.
+            </span>
+            <span className="hidden md:block">
+              Generate secure QR codes on your phone with zero internet. Merchants scan, backend verifies instantly. Simple, safe payments built for markets, transport, and real-world low-connectivity areas.
+            </span>
+          </p>
+
+          <div
+            className="flex flex-col opacity-0 transform translate-y-12 w-full text-left"
+            ref={buttonRef}
+          >
+            <div className="flex items-center gap-3 max-md:mb-4 md:flex md:items-center md:gap-3 md:mb-6">
+              <img
+                src="https://res.cloudinary.com/dtaqusjav/image/upload/v1724414014/people_aenuc1.svg"
+                alt="People icons"
+                className="w-9 h-9 md:w-auto md:h-9"
+              />
+              <span className="text-white text-sm md:text-base font-medium">4,200+ users</span>
             </div>
+            <div className="w-full max-md:[&>div]:!block max-md:[&>div]:!w-full md:w-auto">
+              <Magnetic>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleScrollToWaitlist}
+                  className="w-full bg-white text-customOrange max-md:py-4 font-bold rounded-full hover:bg-gray-100 text-base shadow-lg hover:shadow-xl transition-all duration-300 md:w-auto md:px-10 md:py-4"
+                >
+                  Start Paying Offline Today
+                </motion.button>
+              </Magnetic>
+            </div>
+          </div>
         </div>
 
         {/* Models Block */}
