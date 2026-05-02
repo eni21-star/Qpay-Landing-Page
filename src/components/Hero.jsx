@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react"; //thi is one
 import { gsap } from "gsap";
 import { FiX } from "react-icons/fi";
 import { RiMenu3Line } from "react-icons/ri";
@@ -219,7 +219,7 @@ const Hero = () => {
         type: "spring",
         stiffness: 100,
         damping: 20,
-        duration: 1.5,
+        duration: 1.5
       },
     },
   };
