@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS to style the timer and make sure it uses colons */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+.spin-animation {
+  animation: spin 5s ease-in-out;
+}
+.footer-text{
+  font-size: 8px;
+
+}
+.height{
+  height: 33px;
+}
