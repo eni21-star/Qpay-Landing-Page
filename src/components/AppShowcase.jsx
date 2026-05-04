@@ -35,7 +35,7 @@ const AppShowcase = () => {
     if (marqueeRef.current) {
       pillTweenRef.current = gsap.to(marqueeRef.current, {
         xPercent: -50,
-        duration: isMobile ? 20 : 16,
+        duration: isMobile ? 26 : 20,
         ease: "none",
         repeat: -1,
       });
