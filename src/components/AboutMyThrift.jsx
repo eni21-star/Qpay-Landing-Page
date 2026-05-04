@@ -56,7 +56,7 @@ const AboutMyThrift = () => {
         },
         (context) => {
           const { isMobile } = context.conditions;
-          const scrubAmount = isMobile ? 0.55 : 1;
+          const scrubAmount = isMobile ? 0.9 : 1;
           const stepEase = isMobile ? "none" : "power2.out";
           const screenEase = isMobile ? "none" : "power2.inOut";
 
@@ -96,15 +96,17 @@ const AboutMyThrift = () => {
             scrub: scrubAmount,
             snap: isMobile
               ? {
-                  snapTo: "labelsDirectional",
-                  duration: { min: 0.15, max: 0.35 },
-                  delay: 0.05,
+                  snapTo: [0, 0.5, 1],
+                  directional: true,
+                  inertia: false,
+                  duration: { min: 0.25, max: 0.45 },
+                  delay: 0.1,
                   ease: "power1.inOut",
                 }
               : false,
             pin: true,
             anticipatePin: isMobile ? 1 : 0,
-            fastScrollEnd: true,
+            fastScrollEnd: isMobile ? false : true,
             invalidateOnRefresh: true,
           },
         });
@@ -248,10 +250,12 @@ const AboutMyThrift = () => {
         }
         @media (max-width: 767px) {
           .howitw-pin {
-            min-height: auto;
-            justify-content: flex-start;
+            min-height: 100svh;
+            justify-content: center;
           }
           .howitw-grid {
+            min-height: 100svh;
+            align-content: center;
             grid-template-columns: minmax(0, 1fr) minmax(150px, 46%);
             gap: 0.75rem;
             padding-top: 0.5rem;
@@ -463,7 +467,7 @@ const AboutMyThrift = () => {
                   <img
                     src={screenStep1}
                     alt="Enter Amount Screen"
-                    className="block h-full w-full object-contain object-top"
+                    className="block h-full w-full object-cover object-top md:object-contain"
                   />
                 </div>
                 <div
@@ -473,7 +477,7 @@ const AboutMyThrift = () => {
                   <img
                     src={screenStep2}
                     alt="Merchant QR Screen"
-                    className="block h-full w-full object-contain object-top"
+                    className="block h-full w-full object-cover object-top md:object-contain"
                   />
                 </div>
                 <div
@@ -483,7 +487,7 @@ const AboutMyThrift = () => {
                   <img
                     src={screenStep3}
                     alt="Payment Confirmed Screen"
-                    className="block h-full w-full object-contain object-top"
+                    className="block h-full w-full object-cover object-top md:object-contain"
                   />
                 </div>
               </div>
