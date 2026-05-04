@@ -131,8 +131,8 @@ const Testimonials = () => {
       </div>
 
       {/* Wave Transition */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 transform rotate-180">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="block w-full h-[40px] md:h-[80px] fill-customOrange">
+      <div className="absolute bottom-0 left-0 z-0 hidden w-full rotate-180 overflow-hidden leading-none md:block">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="block h-[80px] w-full fill-customOrange">
           <path d="M1200,0H0v60c0,0,131-40,277-38s207,32,319,33s181-25,298-31S1200,60,1200,60V0z"></path>
         </svg>
       </div>
