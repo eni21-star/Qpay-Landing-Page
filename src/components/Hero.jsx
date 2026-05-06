@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { gsap } from "gsap";
 import { FiX } from "react-icons/fi";
 import { RiMenu3Line } from "react-icons/ri";
@@ -12,6 +13,11 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { motion } from "framer-motion";
 import Magnetic from "./Magnetic";
+import { CONTACT_MODAL_EVENT } from "../utils/contactModal";
+
+const CONTACT_API_URL =
+  "https://landingpageqpay.mythriftpayments.cc/api/v1/contact";
+const CONTACT_API_KEY = import.meta.env.VITE_QPAY_CONTACT_API_KEY;
 
 const QLogo = ({ className = "" }) => (
   <div className={`flex items-center ${className}`}>
@@ -28,13 +34,16 @@ const Hero = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [isToastShown, setIsToastShown] = useState(false);
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [modalNotice, setModalNotice] = useState({
+    message: "",
+    isVisible: false,
+  });
 
   const heroRef = useRef(null);
   const modalRef = useRef(null);
   const sideMenuRef = useRef(null);
+  const modalNoticeTimerRef = useRef(null);
 
   useEffect(() => {
     if (!heroRef.current) return undefined;
@@ -70,18 +79,69 @@ const Hero = () => {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    const handleOpenContactModal = () => {
+      openModal();
+    };
+
+    window.addEventListener(CONTACT_MODAL_EVENT, handleOpenContactModal);
+
+    return () => {
+      window.removeEventListener(CONTACT_MODAL_EVENT, handleOpenContactModal);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (modalNoticeTimerRef.current) {
+        clearTimeout(modalNoticeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const showModalError = (message) => {
+    if (modalNoticeTimerRef.current) {
+      clearTimeout(modalNoticeTimerRef.current);
+    }
+
+    setModalNotice({ message, isVisible: true });
+
+    modalNoticeTimerRef.current = setTimeout(() => {
+      setModalNotice((currentNotice) => ({
+        ...currentNotice,
+        isVisible: false,
+      }));
+
+      modalNoticeTimerRef.current = setTimeout(() => {
+        setModalNotice({ message: "", isVisible: false });
+      }, 260);
+    }, 2600);
+  };
+
   const openModal = () => {
     setIsModalOpen(true);
-    setTimeout(() => {
+    requestAnimationFrame(() => {
+      if (!modalRef.current) return;
       gsap.fromTo(
         modalRef.current,
         { scale: 0.92, opacity: 0 },
         { scale: 1, opacity: 1, duration: 0.35, ease: "power3.out" }
       );
-    }, 0);
+    });
   };
 
   const closeModal = () => {
+    if (modalNoticeTimerRef.current) {
+      clearTimeout(modalNoticeTimerRef.current);
+      modalNoticeTimerRef.current = null;
+    }
+    setModalNotice({ message: "", isVisible: false });
+
+    if (!modalRef.current) {
+      setIsModalOpen(false);
+      return;
+    }
+
     gsap.to(modalRef.current, {
       scale: 0.92,
       opacity: 0,
@@ -103,58 +163,63 @@ const Hero = () => {
   };
 
   const handleSendMessage = async () => {
-    if (!isAnonymous && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      if (!isToastShown) {
-        toast.error("Please enter a valid email address.");
-        setIsToastShown(true);
-      }
+    const trimmedEmail = email.trim();
+    const question = message.trim();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      showModalError("Please enter a valid email address.");
       return;
     }
 
-    if (!message.trim()) {
-      if (!isToastShown) {
-        toast.error("Please enter a message.");
-        setIsToastShown(true);
-      }
+    if (!question) {
+      showModalError("Please enter a question.");
+      return;
+    }
+
+    if (question.length < 10) {
+      showModalError("Please enter at least 10 characters.");
+      return;
+    }
+
+    if (question.length > 2000) {
+      showModalError("Please keep your question under 2000 characters.");
+      return;
+    }
+
+    if (!CONTACT_API_KEY) {
+      showModalError("Contact form is not configured yet.");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "https://mythriftwaitlist.fly.dev/api/v1/contactus",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: isAnonymous
-              ? "Anonymous"
-              : `From: ${email}\nMessage: ${message}`,
-          }),
-        }
-      );
+      const response = await fetch(CONTACT_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": `Bearer ${CONTACT_API_KEY}`,
+        },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          question,
+        }),
+      });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (response.ok) {
-        toast.success("Message sent successfully!");
+        toast.success(data.message || "Question submitted successfully.", {
+          id: "contact-form-success",
+        });
         closeModal();
         setEmail("");
         setMessage("");
-        setIsAnonymous(false);
-        setIsToastShown(false);
-      } else if (!isToastShown) {
-        toast.error(`Failed to send message: ${data.message || "Unknown error"}`);
-        setIsToastShown(true);
+      } else {
+        showModalError(data.message || "Failed to send message.");
       }
     } catch (error) {
-      if (!isToastShown) {
-        toast.error(`An error occurred: ${error.message}`);
-        setIsToastShown(true);
-      }
+      showModalError(`An error occurred: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -196,9 +261,9 @@ const Hero = () => {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent_35%),linear-gradient(180deg,rgba(249,84,29,0.14),rgba(249,84,29,0.02))]" />
 
       <nav className="relative z-30">
-        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-4 sm:px-6 sm:py-5 md:px-[8vw]">
+        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-4 py-4 sm:px-6 sm:py-5 md:px-8 lg:px-12 xl:px-16">
           <div className="flex h-10 items-center md:h-11">
-            <QLogo className="ml-1 -translate-y-0.5" />
+            <QLogo />
           </div>
 
           <button
@@ -299,8 +364,8 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="relative z-20 mx-auto grid min-h-[calc(100svh-4.5rem)] w-full max-w-[1440px] items-center gap-10 px-4 pt-10 pb-10 sm:px-6 md:min-h-[calc(100svh-5.5rem)] md:gap-8 md:px-[6vw] md:pt-10 md:pb-12 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.95fr)] lg:gap-12 lg:px-[8vw] lg:pt-12 lg:pb-14 xl:gap-16 xl:pt-14 xl:pb-16">
-        <div className="flex max-w-[40rem] flex-col justify-center md:max-w-[40rem] lg:max-w-[40rem]">
+      <div className="relative z-20 mx-auto grid min-h-[calc(100svh-4.5rem)] w-full max-w-[1440px] items-center gap-8 px-4 pt-7 pb-9 sm:px-6 sm:pt-9 sm:pb-10 md:min-h-[calc(100svh-5.25rem)] md:gap-8 md:px-8 md:pt-10 md:pb-12 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.92fr)] lg:gap-11 lg:px-12 lg:pt-11 lg:pb-14 xl:gap-16 xl:px-16">
+        <div className="flex w-full max-w-[40rem] flex-col justify-center">
           <span
             data-hero="copy"
             className="mb-4 inline-flex w-fit rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/80 sm:text-xs"
@@ -310,7 +375,7 @@ const Hero = () => {
 
           <h1
             data-hero="copy"
-            className="font-heading text-[2.8rem] leading-[0.95] tracking-[-0.05em] text-white sm:text-[3.6rem] md:text-[3.85rem] md:leading-[0.92] lg:text-[4.6rem] xl:text-[5.5rem]"
+            className="font-heading text-[clamp(2.55rem,13vw,3.55rem)] leading-[0.95] tracking-[-0.05em] text-white sm:text-[clamp(3.25rem,9vw,4rem)] md:text-[4.15rem] md:leading-[0.92] lg:text-[4.75rem] xl:text-[5.5rem]"
             style={{ textShadow: "0 2px 20px rgba(249,84,29,0.35)" }}
           >
             Pay Anywhere.
@@ -320,11 +385,11 @@ const Hero = () => {
 
           <p
             data-hero="copy"
-            className="mt-4 max-w-[30rem] text-[0.98rem] leading-relaxed text-white/78 sm:text-base md:mt-5 md:max-w-[28rem] md:text-[1.02rem] lg:mt-6 lg:max-w-xl lg:text-lg"
+            className="mt-4 max-w-[34rem] text-[0.95rem] leading-relaxed text-white/78 sm:text-base md:mt-5 md:text-[1.02rem] lg:mt-6 lg:max-w-xl lg:text-lg"
           >
             Generate secure QR payments on your phone without internet.
             Merchants scan, payment confirms fast, and everything feels simple
-            even in low-connectivity, real-world environments.
+            even when you&apos;re completely offline.
           </p>
 
           <div
@@ -337,7 +402,7 @@ const Hero = () => {
               className="h-9 w-9 md:h-10 md:w-10"
             />
             <span className="text-sm font-medium text-white md:text-base">
-              4,200+ users
+              Active user community
             </span>
           </div>
 
@@ -367,9 +432,9 @@ const Hero = () => {
 
         <div
           data-hero="visual"
-          className="relative flex items-center justify-center lg:justify-end"
+          className="relative flex min-w-0 items-center justify-center lg:justify-end"
         >
-          <div className="relative w-full max-w-[27rem] sm:max-w-[31rem] md:max-w-[34rem] lg:max-w-[31rem] xl:max-w-[38rem]">
+          <div className="relative w-full max-w-[min(100%,23rem)] sm:max-w-[29rem] md:max-w-[31rem] lg:max-w-[29.5rem] xl:max-w-[34rem]">
             <div className="pointer-events-none absolute left-[4%] top-[10%] h-[22%] w-[22%] rounded-full bg-white/16 blur-3xl" />
             <div className="pointer-events-none absolute bottom-[6%] right-[2%] h-[26%] w-[26%] rounded-full bg-black/18 blur-3xl" />
 
@@ -377,94 +442,105 @@ const Hero = () => {
               <div className="rounded-[1.6rem] bg-gradient-to-b from-white/8 to-black/10 px-2 pt-2 pb-0 sm:rounded-[2rem] sm:px-3 sm:pt-3 sm:pb-0 md:rounded-[1.75rem] md:px-2.5 md:pt-2.5 md:pb-0 lg:rounded-[2rem]">
                 <div className="relative overflow-hidden rounded-[1.4rem] bg-white/5 sm:rounded-[1.8rem] md:rounded-[1.55rem] lg:rounded-[1.8rem]">
                   <img
-                    src="/ChatGPT_Image_Apr_28__2026_at_06_21_14_PM-removebg-preview.png"
+                    src="/hero-qpay-users.png"
                     alt="QPay Offline Payment UI"
-                    className="block h-auto w-full object-contain"
+                    className="mx-auto block h-auto max-h-[none] w-auto max-w-full object-contain lg:max-h-[calc(100svh-14rem)] xl:max-h-[calc(100svh-13rem)]"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="absolute -left-2 bottom-[14%] rounded-2xl border border-white/14 bg-white/12 px-3 py-2 shadow-[0_12px_30px_rgba(0,0,0,0.16)] backdrop-blur-sm sm:left-0 sm:px-4 sm:py-3 md:left-[-10px] md:bottom-[12%] md:px-3 md:py-2 lg:left-0 lg:bottom-[14%] lg:px-4 lg:py-3">
+            <div className="absolute -left-1 bottom-[13%] rounded-2xl border border-white/14 bg-white/12 px-2.5 py-2 shadow-[0_12px_30px_rgba(0,0,0,0.16)] backdrop-blur-sm sm:left-0 sm:px-4 sm:py-3 md:left-[-8px] md:bottom-[12%] md:px-3 md:py-2 lg:left-0 lg:bottom-[14%] lg:px-4 lg:py-3">
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/65">
                 No Network
               </p>
-              <p className="mt-1 text-sm font-bold text-white md:text-[0.95rem] lg:text-base">
+              <p className="mt-1 text-xs font-bold text-white sm:text-sm md:text-[0.95rem] lg:text-base">
                 QR still generates instantly
               </p>
             </div>
 
-            <div className="absolute -right-1 top-[12%] rounded-2xl border border-white/14 bg-white px-3 py-2 text-customOrange shadow-[0_12px_30px_rgba(0,0,0,0.16)] sm:right-1 sm:px-4 sm:py-3 md:right-[-8px] md:top-[10%] md:px-3 md:py-2 lg:right-1 lg:top-[12%] lg:px-4 lg:py-3">
+            <div className="absolute -right-1 top-[12%] rounded-2xl border border-white/14 bg-white px-2.5 py-2 text-customOrange shadow-[0_12px_30px_rgba(0,0,0,0.16)] sm:right-1 sm:px-4 sm:py-3 md:right-[-8px] md:top-[10%] md:px-3 md:py-2 lg:right-1 lg:top-[12%] lg:px-4 lg:py-3">
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-customOrange/70">
                 Confirmed
               </p>
-              <p className="mt-1 text-sm font-bold md:text-[0.95rem] lg:text-base">Under 3 seconds</p>
+              <p className="mt-1 text-xs font-bold sm:text-sm md:text-[0.95rem] lg:text-base">Under 3 seconds</p>
             </div>
           </div>
         </div>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {isModalOpen && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6">
           <div
-            className="absolute inset-0 bg-black/60"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-md"
             onClick={closeModal}
           ></div>
           <div
             ref={modalRef}
-            className="relative z-10 w-11/12 max-w-lg rounded-lg bg-white shadow-lg md:w-[min(36rem,90vw)]"
+            className="relative z-10 w-full max-w-xl overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_32px_90px_rgba(15,23,42,0.32),0_0_0_1px_rgba(255,255,255,0.55)]"
           >
-            <div className="relative rounded-t-lg bg-customOrange py-2 text-white">
-              <button
-                onClick={closeModal}
-                className="absolute right-2 top-2 text-white hover:text-gray-200"
-              >
-                <FiX size={24} />
-              </button>
-              <h2 className="px-4 text-center font-heading text-2xl sm:text-3xl md:mb-16 md:text-5xl">
-                Have a Question or Suggestion?
-              </h2>
+            <div
+              role="alert"
+              aria-live="polite"
+              className={`pointer-events-none absolute left-1/2 top-4 z-30 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-2xl border border-red-100 bg-white/95 px-4 py-3 text-center text-sm font-semibold text-red-600 shadow-[0_18px_48px_rgba(15,23,42,0.22)] backdrop-blur-md transition-all duration-300 ease-out ${
+                modalNotice.message && modalNotice.isVisible
+                  ? "translate-y-0 opacity-100"
+                  : "-translate-y-2 opacity-0"
+              }`}
+            >
+              {modalNotice.message}
             </div>
 
-            <div className="p-6">
-              <p className="mb-4 -translate-y-1 text-center text-xs text-gray-500 md:px-14">
-                Leave us a message and we&apos;ll get back to you as soon as
-                possible!
+            <div className="relative overflow-hidden bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.35),transparent_28%),linear-gradient(135deg,#F9541D_0%,#FF6A2A_48%,#E74412_100%)] px-6 pb-8 pt-7 text-white sm:px-8 sm:pb-9 sm:pt-8">
+              <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-white/20 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-24 left-8 h-44 w-44 rounded-full bg-black/15 blur-3xl" />
+              <button
+                onClick={closeModal}
+                aria-label="Close contact form"
+                className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/15 text-white backdrop-blur-sm transition-colors hover:bg-white/25"
+              >
+                <FiX size={20} />
+              </button>
+              <p className="relative z-10 mb-3 text-center text-[11px] font-bold uppercase tracking-[0.28em] text-white/75">
+                Contact QPay
               </p>
+              <h2 className="relative z-10 mx-auto max-w-md text-center font-heading text-3xl font-bold leading-tight sm:text-4xl">
+                Have a Question or Suggestion?
+              </h2>
+              <p className="relative z-10 mx-auto mt-4 max-w-sm text-center text-sm leading-relaxed text-white/78 sm:text-base">
+                Send us a note and we&apos;ll get back to you as soon as possible.
+              </p>
+            </div>
 
-              {!isAnonymous && (
+            <div className="space-y-5 p-6 sm:p-8">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Email address
+                </label>
                 <input
                   type="email"
-                  placeholder="Enter Your Email"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mb-4 h-10 w-full rounded-full border border-gray-300 p-3 focus:border-customOrange focus:outline-none"
+                  className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-customOrange focus:bg-white focus:ring-4 focus:ring-orange-100"
                 />
-              )}
+              </div>
 
-              <textarea
-                placeholder="Write a message.."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="mb-4 h-44 w-full resize-none rounded-md border border-gray-300 bg-gray-100 p-3 placeholder:pl-1 placeholder:pt-2 focus:border-customOrange focus:outline-none"
-              />
-
-              <div className="mb-4 flex items-center">
-                <input
-                  type="checkbox"
-                  id="anonymous"
-                  checked={isAnonymous}
-                  onChange={() => setIsAnonymous(!isAnonymous)}
-                  className="mr-2"
-                />
-                <label htmlFor="anonymous" className="text-sm text-gray-500">
-                  Submit Anonymously
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Question
                 </label>
+                <textarea
+                  placeholder="Write your question..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="h-40 w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-relaxed text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-customOrange focus:bg-white focus:ring-4 focus:ring-orange-100 sm:h-44"
+                />
               </div>
 
               <button
                 onClick={handleSendMessage}
-                className="flex w-full items-center justify-center rounded-full bg-customOrange p-3 text-white hover:bg-orange-600"
+                className="flex h-12 w-full items-center justify-center rounded-full bg-customOrange px-6 text-sm font-bold text-white shadow-[0_14px_32px_rgba(249,84,29,0.28)] transition-all hover:-translate-y-0.5 hover:bg-orange-600 hover:shadow-[0_18px_38px_rgba(249,84,29,0.34)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -481,7 +557,8 @@ const Hero = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <Toaster position="top-center" />

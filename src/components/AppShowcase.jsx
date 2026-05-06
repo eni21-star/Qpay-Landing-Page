@@ -72,21 +72,21 @@ const AppShowcase = () => {
   }, []);
 
   const renderPhoneSet = (keyPrefix) => (
-    <div className="flex flex-row items-end gap-3 sm:gap-6 md:gap-8">
+    <div className="flex flex-row items-end gap-2 min-[380px]:gap-2.5 sm:gap-6 md:gap-8">
       {screens.map((screen, index) => (
         <div
           key={`${keyPrefix}-${index}`}
-          className="relative h-[132vw] w-[62vw] max-h-[520px] max-w-[248px] flex-shrink-0 min-[400px]:h-[124vw] min-[400px]:w-[58vw] sm:h-[400px] sm:w-[190px] md:h-[460px] md:w-[220px]"
+          className="relative h-[92vw] w-[43vw] max-h-[370px] max-w-[174px] flex-shrink-0 min-[375px]:h-[88vw] min-[375px]:w-[41vw] min-[430px]:h-[82vw] min-[430px]:w-[38vw] sm:h-[400px] sm:w-[190px] md:h-[460px] md:w-[220px]"
         >
           <div
-            className="relative w-full h-full rounded-[2.5rem] border-[3px] border-white/20 overflow-hidden bg-white"
+            className="relative h-full w-full overflow-hidden rounded-[1.65rem] border-[2px] border-white/20 bg-white min-[430px]:rounded-[1.9rem] sm:rounded-[2.5rem] sm:border-[3px]"
             style={{
               boxShadow:
-                "0 0 0 2px rgba(255,255,255,0.15), 0 24px 48px rgba(0,0,0,0.3)",
+                "0 0 0 2px rgba(255,255,255,0.15), 0 18px 38px rgba(0,0,0,0.26)",
             }}
           >
-            <div className="absolute left-1/2 top-3 z-10 h-1.5 w-14 -translate-x-1/2 rounded-full bg-black/10 sm:top-4 sm:h-2 sm:w-16" />
-            <div className="absolute inset-[6px] overflow-hidden rounded-[2rem] bg-[#f8f8f8] sm:inset-[8px] md:inset-[10px]">
+            <div className="absolute left-1/2 top-2 z-10 h-1 w-10 -translate-x-1/2 rounded-full bg-black/10 sm:top-4 sm:h-2 sm:w-16" />
+            <div className="absolute inset-[5px] overflow-hidden rounded-[1.35rem] bg-[#f8f8f8] min-[430px]:rounded-[1.6rem] sm:inset-[8px] sm:rounded-[2rem] md:inset-[10px]">
               <img
                 src={screen.src}
                 alt={screen.label}
@@ -95,7 +95,7 @@ const AppShowcase = () => {
             </div>
           </div>
 
-          <p className="mt-3 text-center text-xs font-medium text-white/60 sm:text-sm md:mt-4">
+          <p className="mt-2 text-center text-[11px] font-medium text-white/60 sm:mt-3 sm:text-sm md:mt-4">
             {screen.label}
           </p>
         </div>
@@ -139,8 +139,8 @@ const AppShowcase = () => {
         </div>
       </div>
 
-      <div className="relative w-full px-[12vw] pb-8 sm:px-0 md:pb-12">
-        <div ref={stripRef} className="flex w-max flex-row gap-3 sm:gap-6 md:gap-8">
+      <div className="relative w-full px-[2vw] pb-8 min-[430px]:px-[4vw] sm:px-0 md:pb-12">
+        <div ref={stripRef} className="flex w-max flex-row gap-2 min-[380px]:gap-2.5 sm:gap-6 md:gap-8">
           {renderPhoneSet("screen1")}
           {renderPhoneSet("screen2")}
         </div>

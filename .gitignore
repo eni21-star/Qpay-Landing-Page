@@ -24,3 +24,5 @@ __MACOSX/
 *.njsproj
 *.sln
 *.sw?
+.env
+

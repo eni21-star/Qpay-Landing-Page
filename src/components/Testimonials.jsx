@@ -2,9 +2,9 @@
 
 const Testimonials = () => {
   const statPills = [
-    { text: "4,200+ active users" },
-    { text: "Available in 12+ Nigerian cities" },
-    { text: "4.9 \u2605 average rating" },
+    { text: "Active and growing community" },
+    { text: "Available all across Nigeria" },
+    { text: "Amazing user feedbacks" },
   ];
 
   const testimonials = [

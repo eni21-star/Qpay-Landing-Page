@@ -54,8 +54,8 @@ const ComingSoonSection = () => {
           transition={{ delay: 0.4 }}
           className="mb-4 flex flex-row justify-center gap-4 md:justify-start"
         >
-          <a
-            href="#"
+          <button
+            type="button"
             className="block overflow-hidden rounded-2xl transition-transform duration-200 hover:scale-105 active:scale-95"
           >
             <img
@@ -63,10 +63,10 @@ const ComingSoonSection = () => {
               alt="Get it on Google Play"
               className="h-12 w-auto md:h-14"
             />
-          </a>
+          </button>
 
-          <a
-            href="#"
+          <button
+            type="button"
             className="block overflow-hidden rounded-2xl transition-transform duration-200 hover:scale-105 active:scale-95"
           >
             <img
@@ -74,7 +74,7 @@ const ComingSoonSection = () => {
               alt="Download on the App Store"
               className="h-12 w-auto md:h-14"
             />
-          </a>
+          </button>
         </motion.div>
 
         <motion.p

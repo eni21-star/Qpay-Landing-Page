@@ -250,42 +250,142 @@ const AboutMyThrift = () => {
         }
         @media (max-width: 767px) {
           .howitw-pin {
-            min-height: 100svh;
+            min-height: 92svh;
             justify-content: center;
           }
+          .howitw-progress {
+            display: none;
+          }
+          .howitw-copy-stage {
+            margin-left: 0 !important;
+          }
           .howitw-grid {
-            min-height: 100svh;
+            min-height: 92svh;
             align-content: center;
-            grid-template-columns: minmax(0, 1fr) minmax(150px, 46%);
-            gap: 0.75rem;
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
+            grid-template-columns: minmax(0, 1fr) minmax(120px, 34vw);
+            gap: clamp(0.65rem, 2.5vw, 1rem);
+            padding: 0.75rem 1rem;
           }
           .howitw-left,
           .howitw-phone {
-            height: 64svh;
-            min-height: 430px;
-            max-height: 540px;
+            height: min(62svh, 470px);
+            min-height: 360px;
+            max-height: 470px;
           }
           .howitw-phone {
-            width: 45vw;
-            min-width: 155px;
-            max-width: 190px;
+            width: min(36vw, 176px);
+            min-width: 120px;
+            max-width: 176px;
+          }
+          .howitw-left h3 {
+            max-width: min(100%, 18.5rem);
+            font-size: clamp(1.55rem, 5.8vw, 2.35rem);
+          }
+          .howitw-left p {
+            max-width: min(100%, 18rem);
+            font-size: clamp(0.8rem, 2.8vw, 1rem);
+          }
+          .howitw-left .rounded-full {
+            padding-left: 0.65rem;
+            padding-right: 0.65rem;
           }
         }
         @media (min-width: 390px) and (max-width: 767px) {
           .howitw-grid {
-            grid-template-columns: minmax(0, 1fr) minmax(160px, 46%);
+            grid-template-columns: minmax(0, 1fr) minmax(136px, 36vw);
             gap: 1rem;
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
+            padding: 0.85rem 1.1rem;
           }
           .howitw-left,
           .howitw-phone {
-            height: 66svh;
+            height: min(62svh, 500px);
           }
           .howitw-phone {
-            width: 46vw;
+            width: min(38vw, 184px);
+          }
+        }
+        @media (min-width: 481px) and (max-width: 767px) {
+          .howitw-left {
+            min-height: 390px;
+          }
+          .howitw-phone {
+            min-height: 390px;
+          }
+        }
+        @media (max-width: 480px) {
+          .howitw-pin {
+            min-height: 88svh;
+            justify-content: center;
+          }
+          .howitw-grid {
+            min-height: 88svh;
+            align-content: center;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 0.5rem;
+            padding: 0.75rem 1rem 1rem;
+          }
+          .howitw-left {
+            height: 32svh;
+            min-height: 205px;
+            max-height: 260px;
+          }
+          .howitw-phone {
+            height: 50svh;
+            min-height: 320px;
+            max-height: 430px;
+            width: min(64vw, 205px);
+            min-width: 165px;
+          }
+          .howitw-left .absolute.text-\\[72px\\],
+          .howitw-left .min-\\[390px\\]\\:text-\\[82px\\] {
+            font-size: clamp(4rem, 21vw, 5.2rem);
+          }
+          .howitw-left h3 {
+            max-width: 100%;
+            font-size: clamp(1.45rem, 7.4vw, 1.95rem);
+            line-height: 1.02;
+          }
+          .howitw-left p {
+            max-width: 19rem;
+            font-size: 0.75rem;
+            line-height: 1.4;
+          }
+          .howitw-left span {
+            white-space: normal;
+          }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .howitw-pin {
+            min-height: 640px;
+            justify-content: flex-start;
+            padding-top: 1rem;
+            padding-bottom: 1.5rem;
+          }
+          .howitw-grid {
+            min-height: auto;
+            height: 560px;
+            max-width: 920px;
+            grid-template-columns: minmax(0, 0.95fr) minmax(220px, 0.9fr);
+            gap: 1.75rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+          }
+          .howitw-left {
+            height: 430px;
+          }
+          .howitw-phone {
+            height: 500px;
+            width: 235px;
+          }
+        }
+        @media (min-width: 1024px) {
+          .howitw-pin {
+            min-height: min(760px, calc(100svh - 5rem));
+            padding-top: 1.25rem;
+            padding-bottom: 1.25rem;
+          }
+          .howitw-grid {
+            min-height: auto;
           }
         }
 
@@ -323,9 +423,9 @@ const AboutMyThrift = () => {
         }
       `}</style>
 
-      <section id="how-it-works" className="relative z-10 -mt-[1px] bg-white pt-14 md:pt-16">
+      <section id="how-it-works" className="relative z-10 -mt-[1px] bg-white pt-8 pb-6 md:pt-10 md:pb-8 lg:pt-12 lg:pb-10">
         <div
-          className="mx-auto mb-10 max-w-5xl px-4 text-center sm:px-6 md:mb-16"
+          className="mx-auto mb-4 max-w-5xl px-4 text-center sm:px-6 md:mb-5 lg:mb-8"
           ref={titleRef}
         >
           <p className="mb-3 text-xs font-bold uppercase tracking-widest text-customOrange md:text-sm">
@@ -346,13 +446,13 @@ const AboutMyThrift = () => {
         >
           <div className="howitw-grid mx-auto grid w-full max-w-5xl grid-cols-[minmax(0,1fr)_minmax(116px,38%)] items-center gap-3 px-4 py-8 min-[390px]:grid-cols-[minmax(0,1fr)_minmax(132px,38%)] min-[390px]:gap-4 sm:grid-cols-[minmax(0,1fr)_43%] sm:gap-5 sm:px-5 md:grid-cols-[minmax(0,0.9fr)_minmax(250px,1.1fr)] md:gap-8 md:px-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(300px,1.15fr)]">
             <div className="howitw-left relative flex h-[300px] min-w-0 min-[390px]:h-[316px] sm:h-[460px] md:h-[440px] lg:h-[460px]">
-              <div className="absolute bottom-2 left-0 top-2 flex w-0 flex-col justify-between border-l-2 border-dashed border-orange-200">
+              <div className="howitw-progress absolute bottom-2 left-0 top-2 flex w-0 flex-col justify-between border-l-2 border-dashed border-orange-200">
                 <div ref={(el) => (dotsRef.current[0] = el)} className="rounded-full" />
                 <div ref={(el) => (dotsRef.current[1] = el)} className="rounded-full" />
                 <div ref={(el) => (dotsRef.current[2] = el)} className="rounded-full" />
               </div>
 
-              <div className="relative ml-4 h-full w-full sm:ml-6 md:ml-8 lg:ml-10">
+              <div className="howitw-copy-stage relative ml-4 h-full w-full sm:ml-6 md:ml-8 lg:ml-10">
                 <div
                   ref={(el) => (leftTextRef.current[0] = el)}
                   className="absolute inset-0 flex flex-col justify-center"
@@ -467,7 +567,7 @@ const AboutMyThrift = () => {
                   <img
                     src={screenStep1}
                     alt="Enter Amount Screen"
-                    className="block h-full w-full object-cover object-top md:object-contain"
+                    className="block h-full w-full object-contain object-top"
                   />
                 </div>
                 <div
@@ -477,7 +577,7 @@ const AboutMyThrift = () => {
                   <img
                     src={screenStep2}
                     alt="Merchant QR Screen"
-                    className="block h-full w-full object-cover object-top md:object-contain"
+                    className="block h-full w-full object-contain object-top"
                   />
                 </div>
                 <div
@@ -487,7 +587,7 @@ const AboutMyThrift = () => {
                   <img
                     src={screenStep3}
                     alt="Payment Confirmed Screen"
-                    className="block h-full w-full object-cover object-top md:object-contain"
+                    className="block h-full w-full object-contain object-top"
                   />
                 </div>
               </div>
