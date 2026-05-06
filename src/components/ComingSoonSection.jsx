@@ -154,8 +154,11 @@ const ComingSoonSection = () => {
                 webp="/optimized/screen-qr.webp"
                 src="/lean/photo_2026-05-02_02-06-16.jpg"
                 alt="QR Screen"
-                loading="lazy"
+                width="393"
+                height="852"
+                loading="eager"
                 decoding="async"
+                fetchPriority="high"
                 style={{
                   width: "100%",
                   height: "auto",
